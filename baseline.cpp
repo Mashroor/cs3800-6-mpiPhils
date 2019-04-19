@@ -1,3 +1,7 @@
+// Name: Joshua Pondrom, Mashroor Rashid
+// Course: CS3800 "Introduction to Operating systems"
+// Section: "The better one"
+// Assignment: Dining Philosophers, Read-Write Problem
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -49,6 +53,7 @@ int main ( int argc, char *argv[] )
 //   int leftNeighbor = (id + p - 1) % p;
   int rightNeighbor = (id + 1) % p;
   
+  //determine set position
   std::string title;
   bool oddAmount = p % 2 != 0;
   if(p - 1 == id && oddAmount) {
@@ -58,9 +63,6 @@ int main ( int argc, char *argv[] )
   } else {
       title = "odd";
   }
-
-
-
 
   pomerize P;
 
@@ -99,16 +101,7 @@ int main ( int argc, char *argv[] )
         }
     }
 
-    if(title == "last") {
-        std::cout << "LAST IN THIS MF" << std::endl;
-    } else if (title == "even") {
-        std::cout << "EVEN AF" << std::endl;
-    } else {
-        std::cout << "ODD BICH" << std::endl;
-    }
-
-
-    // Writing blocc
+    // Writing block
     foutLeft << id << "'s poem:" << endl;
     foutRight << id << "'s poem:" << endl;
     
@@ -126,8 +119,7 @@ int main ( int argc, char *argv[] )
     foutRight << stanza3 << endl << endl;
 
     numWritten++;
-    // Writing blocc over
-
+    // Writing block over
 
     if(title == "even"){
         if(oddAmount){
