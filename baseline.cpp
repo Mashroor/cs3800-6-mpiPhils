@@ -71,14 +71,6 @@ int main ( int argc, char *argv[] )
   bool firstIter = true;
 
   while (numWritten < MAXMESSAGES) {
-    // msgOut = rand() % p; //pick a number/message
-	// MPI::COMM_WORLD.Send ( &msgOut, 1, MPI::INT, leftNeighbor, tag ); 
-    // msgOut = rand() % p; //pick a new number/message
-	// MPI::COMM_WORLD.Send ( &msgOut, 1, MPI::INT, rightNeighbor, tag ); 
-        
-	// MPI::COMM_WORLD.Recv ( &msgIn, 1, MPI::INT, MPI::ANY_SOURCE, tag, status );
-	// MPI::COMM_WORLD.Recv ( &msgIn, 1, MPI::INT, MPI::ANY_SOURCE, tag, status );
-
     // Recieving
     if(!firstIter && title == "even"){
         MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (p - 1), tag, status );
@@ -90,13 +82,13 @@ int main ( int argc, char *argv[] )
         }
     }
 
-    // if(title == "last") {
-    //     std::cout << "LAST IN THIS MF" << std::endl;
-    // } else if (title == "even") {
-    //     std::cout << "EVEN AF" << std::endl;
-    // } else {
-    //     std::cout << "ODD BICH" << std::endl;
-    // }
+    if(title == "last") {
+        std::cout << "LAST IN THIS MF" << std::endl;
+    } else if (title == "even") {
+        std::cout << "EVEN AF" << std::endl;
+    } else {
+        std::cout << "ODD BICH" << std::endl;
+    }
 
 
     // Writing blocc
@@ -125,7 +117,7 @@ int main ( int argc, char *argv[] )
     } else if ( title == "odd" ) {
         MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (p - 1) , tag );
     } else if (title == "last" ) {
-        for(int i = 0; i < p - 1; i *= 2) {
+        for(int i = 0; i < p - 1; i += 2) {
             MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, i , tag );
         }
     }
