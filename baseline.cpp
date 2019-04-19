@@ -73,9 +73,26 @@ int main ( int argc, char *argv[] )
   while (numWritten < MAXMESSAGES) {
     // Recieving
     if(!firstIter && title == "even"){
-        MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (p - 1), tag, status );
+        if(oddAmount){
+            MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (p - 1), tag, status );
+        } else {
+            MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (id + 1), tag, status );
+            if( id == 0 ) {
+                MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (p - 1), tag, status );
+            } else {
+                MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (id - 1), tag, status );
+            }
+        }
     } else if ( title == "odd") {
-        MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (id - 1), tag, status );
+        if(oddAmount){
+            MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (id - 1), tag, status );
+            if( id != p - 2 ) {
+                MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (id + 1) % p, tag, status );
+            }
+        } else {
+            MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (id - 1), tag, status );
+            MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, (id + 1) % p, tag, status );
+        }
     } else if (title == "last") {
         for(int i = 1 ; i < p - 1; i += 2){
             MPI::COMM_WORLD.Recv( &READY, 1, MPI::BYTE, i, tag, status );
@@ -113,9 +130,26 @@ int main ( int argc, char *argv[] )
 
 
     if(title == "even"){
-        MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (id + 1) % p, tag );
+        if(oddAmount){
+            if(id != 0){
+                MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (id - 1), tag );
+            }
+            MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (id + 1) % p, tag );
+        } else {
+            if( id == 0 ) {
+                MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (p - 1), tag );
+            } else {
+                MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (id - 1), tag );
+            }
+            MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (id + 1), tag );
+        }
     } else if ( title == "odd" ) {
-        MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (p - 1) , tag );
+        if(oddAmount){
+            MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (p - 1) , tag );
+        } else {
+            MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (id - 1) , tag );
+            MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, (id + 1) % p , tag );
+        }
     } else if (title == "last" ) {
         for(int i = 0; i < p - 1; i += 2) {
             MPI::COMM_WORLD.Send( &READY, 1, MPI::BYTE, i , tag );
